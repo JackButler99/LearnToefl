@@ -1,0 +1,212 @@
+diff --git a/README.md b/README.md
+index c791da3..dc163a6 100644
+--- a/README.md
++++ b/README.md
+@@ -20,11 +20,11 @@ Open http://localhost:3000, create an account, and choose a practice set or full
+ - A 140-question simulation with separate 35-, 25-, and 55-minute sections. Deadlines are enforced on the server; previous sections cannot be reopened.
+ - SQLite persistence for answers, attempts, progress, and review after completion.
+ - Section summaries, raw correct counts, percentages, transcript review, and explanations.
+-- Responsive interface, question navigation, and browser speech synthesis for listening scripts.
++- Responsive interface, question navigation, and browser speech synthesis that assigns different available voices to `Man:` and `Woman:` dialogue lines when possible.
+ 
+ ## Content and scoring boundaries
+ 
+-The question bank is original demonstration content. Listening uses the browser's synthesized English voice, so pronunciation and playback differ across devices; a production exam-like experience needs properly licensed, human-recorded audio, an expanded and reviewed question bank, and a secure delivery workflow. Some longer listening and reading stimuli have several questions, as in a test, but the bank has not been psychometrically calibrated.
++The question bank is original demonstration content. Listening uses the browser's synthesized English voices. Since the browser does not expose voice gender, the app selects voices by common voice names and uses different pitches as a fallback. Voice availability, pronunciation, and playback differ across devices; a production exam-like experience needs properly licensed, human-recorded audio, an expanded and reviewed question bank, and a secure delivery workflow. Some longer listening and reading stimuli have several questions, as in a test, but the bank has not been psychometrically calibrated.
+ 
+ The app intentionally does **not** calculate an official 310–677 TOEFL ITP score. ETS derives scaled section scores from correct answers using conversions for the test form; percentages from this original bank cannot be converted honestly into a certified score. The app also does not issue certificates. ETS publishes the Level 1 blueprint as Listening 50/35 minutes, Structure 40/25 minutes, and Reading 50/55 minutes: https://www.ets.org/toefl/itp/test-content.html ; scoring background: https://www.ets.org/toefl/itp/scoring.html .
+ 
+diff --git a/src/components/exam-client.tsx b/src/components/exam-client.tsx
+index 5fe6411..210394c 100644
+--- a/src/components/exam-client.tsx
++++ b/src/components/exam-client.tsx
+@@ -1,9 +1,10 @@
+ "use client";
+ import Link from "next/link";
+ import { useRouter } from "next/navigation";
+-import { useCallback, useEffect, useMemo, useState } from "react";
++import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+ import type { AttemptData } from "@/lib/client-types";
+ import { SECTION_NAMES } from "@/lib/client-types";
++import { availableVoices, selectSpeechVoices, splitSpeechLines } from "@/lib/listening-speech";
+ 
+ const letters = ["A", "B", "C", "D"];
+ export function ExamClient({ id }: { id: string }) {
+@@ -14,6 +15,8 @@ export function ExamClient({ id }: { id: string }) {
+   const [busy, setBusy] = useState(false);
+   const [now, setNow] = useState(Date.now());
+   const [speaking, setSpeaking] = useState(false);
++  const speechRun = useRef(0);
++  const activeUtterance = useRef<SpeechSynthesisUtterance | null>(null);
+   const refresh = useCallback(async () => {
+     const response = await fetch(`/api/attempts/${id}`, { cache: "no-store" });
+     if (response.status === 401) { router.push("/login"); return; }
+@@ -27,11 +30,20 @@ export function ExamClient({ id }: { id: string }) {
+   useEffect(() => {
+     if (data?.deadline && now >= data.deadline) refresh().catch(cause => setError(String(cause)));
+   }, [data?.deadline, now, refresh]);
+-  useEffect(() => () => { if (typeof window !== "undefined") window.speechSynthesis?.cancel(); }, []);
++  useEffect(() => () => {
++    speechRun.current += 1;
++    window.speechSynthesis?.cancel();
++  }, []);
+ 
+   const section = data?.mode === "full" ? (["listening", "structure", "reading"] as const)[data.sectionIndex] : data?.section;
+   const questions = useMemo(() => data?.questions.filter(q => q.section === section) || [], [data, section]);
+   const current = questions[index];
++  useEffect(() => {
++    speechRun.current += 1;
++    window.speechSynthesis?.cancel();
++    activeUtterance.current = null;
++    setSpeaking(false);
++  }, [current?.id]);
+   const answered = questions.filter(q => data?.answers[q.id] !== undefined).length;
+   const remaining = Math.max(0, (data?.deadline || 0) - now);
+   const clock = `${Math.floor(remaining / 60000).toString().padStart(2, "0")}:${Math.floor((remaining % 60000) / 1000).toString().padStart(2, "0")}`;
+@@ -46,13 +58,19 @@ export function ExamClient({ id }: { id: string }) {
+     } catch (cause) { setError(cause instanceof Error ? cause.message : "Gagal menyimpan jawaban."); }
+     finally { setBusy(false); }
+   }
++  function stopSpeech() {
++    speechRun.current += 1;
++    window.speechSynthesis?.cancel();
++    activeUtterance.current = null;
++    setSpeaking(false);
++  }
+   async function advance() {
+     if (!data || busy) return;
+     const message = data.mode === "practice" || data.sectionIndex === 2
+       ? "Kumpulkan jawaban sekarang? Hasil akan langsung ditampilkan."
+       : "Akhiri bagian ini? Kamu tidak bisa kembali ke bagian sebelumnya.";
+     if (!window.confirm(message)) return;
+-    window.speechSynthesis?.cancel(); setSpeaking(false); setBusy(true); setError("");
++    stopSpeech(); setBusy(true); setError("");
+     try {
+       const response = await fetch(`/api/attempts/${id}`, { method: "POST" });
+       const result = await response.json();
+@@ -62,26 +80,56 @@ export function ExamClient({ id }: { id: string }) {
+     } catch (cause) { setError(cause instanceof Error ? cause.message : "Gagal berpindah bagian."); }
+     finally { setBusy(false); }
+   }
+-  function play() {
+-    if (!current || !window.speechSynthesis) { setError("Browser ini tidak mendukung pembacaan audio. Coba browser lain."); return; }
+-    window.speechSynthesis.cancel();
+-    const utterance = new SpeechSynthesisUtterance(current.stimulus);
+-    utterance.lang = "en-US"; utterance.rate = 0.9;
+-    utterance.onend = () => setSpeaking(false); utterance.onerror = () => setSpeaking(false);
+-    window.speechSynthesis.speak(utterance); setSpeaking(true);
++  async function play() {
++    if (!current || !window.speechSynthesis || typeof SpeechSynthesisUtterance === "undefined") {
++      setError("Browser ini tidak mendukung pembacaan audio. Coba browser lain."); return;
++    }
++    stopSpeech();
++    const run = speechRun.current;
++    const synthesis = window.speechSynthesis;
++    const lines = splitSpeechLines(current.stimulus);
++    setError(""); setSpeaking(true);
++    try {
++      const voices = selectSpeechVoices(await availableVoices(synthesis));
++      if (run !== speechRun.current) return;
++
++      function speakLine(index: number) {
++        if (run !== speechRun.current) return;
++        if (index === lines.length) { activeUtterance.current = null; setSpeaking(false); return; }
++        const line = lines[index];
++        const utterance = new SpeechSynthesisUtterance(line.text);
++        utterance.lang = "en-US";
++        utterance.voice = voices[line.speaker] ?? null;
++        utterance.rate = 0.9;
++        utterance.pitch = line.speaker === "man" ? 0.85 : line.speaker === "woman" ? 1.15 : 1;
++        utterance.onend = () => speakLine(index + 1);
++        utterance.onerror = () => {
++          if (run !== speechRun.current) return;
++          stopSpeech();
++          setError("Gagal memutar audio dengan suara browser ini. Coba browser lain.");
++        };
++        activeUtterance.current = utterance;
++        synthesis.speak(utterance);
++      }
++      speakLine(0);
++    } catch {
++      if (run !== speechRun.current) return;
++      stopSpeech();
++      setError("Gagal memulai audio dengan suara browser ini. Coba browser lain.");
++    }
+   }
+   if (!data) return <main className="state-screen"><Link href="/" className="brand"><span className="brand-mark">I.</span> ITP Practice Lab</Link><div className="state-box">{error ? <><h2>Belum bisa membuka sesi.</h2><p>{error}</p><button className="button dark" onClick={() => refresh().catch(cause => setError(String(cause)))}>Coba lagi</button></> : <p>Memuat sesi latihan...</p>}</div></main>;
+   if (!current || !section) return <main className="state-screen">Tidak ada soal di bagian ini. <Link href="/">Kembali</Link></main>;
+   return <main className="exam-layout"><header className="exam-topbar"><Link href="/" className="brand"><span className="brand-mark">I.</span> ITP Practice Lab</Link><span className="exam-mode">{data.mode === "full" ? "SIMULASI PENUH" : "LATIHAN SINGKAT"}</span><div className="exam-clock" aria-live="off">{data.deadline ? <><span>WAKTU TERSISA</span><strong className={remaining < 60_000 ? "urgent" : ""}>{clock}</strong></> : <strong>Tanpa batas waktu</strong>}</div></header>
+     <div className="exam-body"><aside className="exam-sidebar"><span className="eyebrow">BAGIAN {data.mode === "full" ? `${data.sectionIndex + 1} / 3` : "LATIHAN"}</span><h2>{SECTION_NAMES[section]}</h2><p>{data.mode === "full" ? "Waktu terus berjalan selama bagian ini aktif. Jawaban disimpan saat kamu memilih opsi." : "Kerjakan dengan ritmemu sendiri. Pembahasan muncul setelah dikumpulkan."}</p>
+       <div className="progress-label"><strong>Soal terjawab</strong><span>{answered} / {questions.length}</span></div><div className="progress-track"><span style={{ width: `${answered / questions.length * 100}%` }} /></div>
+-      <div className="question-grid" aria-label="Navigasi soal">{questions.map((q, i) => <button aria-label={`Soal ${i + 1}${data.answers[q.id] !== undefined ? ", terjawab" : ""}`} aria-current={index === i ? "step" : undefined} className={`${index === i ? "current" : ""} ${data.answers[q.id] !== undefined ? "answered" : ""}`} key={q.id} onClick={() => { window.speechSynthesis?.cancel(); setSpeaking(false); setIndex(i); }}>{i + 1}</button>)}</div>
++      <div className="question-grid" aria-label="Navigasi soal">{questions.map((q, i) => <button aria-label={`Soal ${i + 1}${data.answers[q.id] !== undefined ? ", terjawab" : ""}`} aria-current={index === i ? "step" : undefined} className={`${index === i ? "current" : ""} ${data.answers[q.id] !== undefined ? "answered" : ""}`} key={q.id} onClick={() => { stopSpeech(); setIndex(i); }}>{i + 1}</button>)}</div>
+       <button className="finish-button" onClick={advance} disabled={busy}>{data.mode === "full" && data.sectionIndex < 2 ? "Selesaikan bagian →" : "Kumpulkan jawaban →"}</button><Link className="leave-link" href="/">Simpan &amp; kembali nanti</Link>
+     </aside><section className="question-area"><div className="question-meta"><span>SOAL {index + 1} DARI {questions.length}</span><span>{current.kind === "audio" ? "PEMAHAMAN AUDIO" : current.kind === "passage" ? "PEMAHAMAN BACAAN" : current.kind === "error" ? "IDENTIFIKASI KESALAHAN" : "LENGKAPI KALIMAT"}</span></div>
+-      {current.kind === "audio" ? <div className="audio-card"><span className="audio-icon">♫</span><div><strong>{current.group ? "Dengarkan paparan" : "Dengarkan dialog"}</strong><p>Audio dibacakan oleh suara bawaan browser. Kamu dapat memutarnya ulang.</p></div><button className="audio-button" onClick={play}>{speaking ? "Putar ulang" : "Putar audio"} ▶</button></div> : <div className={`stimulus ${current.kind === "passage" ? "passage" : ""}`}>{current.stimulus}</div>}
++      {current.kind === "audio" ? <div className="audio-card"><span className="audio-icon">♫</span><div><strong>{current.group ? "Dengarkan paparan" : "Dengarkan dialog"}</strong><p>Suara pria dan wanita dibedakan sesuai suara yang tersedia di browser. Kamu dapat memutarnya ulang.</p></div><button className="audio-button" onClick={play}>{speaking ? "Putar ulang" : "Putar audio"} ▶</button></div> : <div className={`stimulus ${current.kind === "passage" ? "passage" : ""}`}>{current.stimulus}</div>}
+       <h1>{current.prompt}</h1><div className="options">{current.options.map((option, choice) => <button key={choice} disabled={busy} className={`option ${data.answers[current.id] === choice ? "chosen" : ""}`} onClick={() => choose(choice)}><span className="option-letter">{letters[choice]}</span><span>{option}</span><span className="option-check">{data.answers[current.id] === choice ? "✓" : ""}</span></button>)}</div>
+       {error && <p className="error-banner" role="alert">{error}</p>}
+-      <div className="question-footer"><button onClick={() => setIndex(Math.max(0, index - 1))} disabled={index === 0}>← Sebelumnya</button><span>Jawaban dapat diubah selama bagian ini masih aktif.</span><button onClick={() => setIndex(Math.min(questions.length - 1, index + 1))} disabled={index === questions.length - 1}>Berikutnya →</button></div>
++      <div className="question-footer"><button onClick={() => { stopSpeech(); setIndex(Math.max(0, index - 1)); }} disabled={index === 0}>← Sebelumnya</button><span>Jawaban dapat diubah selama bagian ini masih aktif.</span><button onClick={() => { stopSpeech(); setIndex(Math.min(questions.length - 1, index + 1)); }} disabled={index === questions.length - 1}>Berikutnya →</button></div>
+       <div className="mobile-actions"><button className="finish-button" onClick={advance} disabled={busy}>{data.mode === "full" && data.sectionIndex < 2 ? "Selesaikan bagian →" : "Kumpulkan jawaban →"}</button><Link className="leave-link" href="/">Simpan &amp; kembali nanti</Link></div>
+     </section></div></main>;
+ }
+diff --git a/src/lib/listening-speech.ts b/src/lib/listening-speech.ts
+new file mode 100644
+index 0000000..2a5b099
+--- /dev/null
++++ b/src/lib/listening-speech.ts
+@@ -0,0 +1,53 @@
++export type Speaker = "man" | "woman" | "speaker";
++export type SpeechLine = { speaker: Speaker; text: string };
++
++const label = /(?:^|\s)(Man|Woman|Speaker):\s*/gi;
++const maleName = /\b(male|alex|aaron|daniel|david|fred|george|guy|james|mark|matthew|paul|rishi|tom)\b/i;
++const femaleName = /\b(female|amy|aria|emma|eva|hazel|jenny|joanna|karen|kendra|kimberly|moira|olivia|salli|samantha|susan|tessa|victoria|zira)\b/i;
++
++export function splitSpeechLines(script: string): SpeechLine[] {
++  const labels = [...script.matchAll(label)];
++  if (!labels.length) return [{ speaker: "speaker", text: script.trim() }];
++
++  const lines: SpeechLine[] = [];
++  const opening = script.slice(0, labels[0].index).trim();
++  if (opening) lines.push({ speaker: "speaker", text: opening });
++
++  labels.forEach((match, index) => {
++    const text = script.slice(match.index! + match[0].length, labels[index + 1]?.index ?? script.length).trim();
++    if (text) lines.push({ speaker: match[1].toLowerCase() as Speaker, text });
++  });
++  return lines;
++}
++
++export function selectSpeechVoices(voices: SpeechSynthesisVoice[]) {
++  const english = voices.filter(voice => /^en(?:[-_]|$)/i.test(voice.lang))
++    .sort((a, b) => Number(/^en[-_]US$/i.test(b.lang)) - Number(/^en[-_]US$/i.test(a.lang)));
++  const namedMan = english.find(voice => maleName.test(voice.name));
++  const namedWoman = english.find(voice => femaleName.test(voice.name));
++  const speaker = english.find(voice => voice.default) ?? english[0];
++  return { man: namedMan ?? speaker, woman: namedWoman ?? speaker, speaker };
++}
++
++export function availableVoices(synthesis: SpeechSynthesis): Promise<SpeechSynthesisVoice[]> {
++  const current = synthesis.getVoices();
++  if (current.length) return Promise.resolve(current);
++
++  // Some browsers populate the voice list after the first request.
++  return new Promise(resolve => {
++    const timeout = window.setTimeout(() => {
++      cleanup();
++      resolve(synthesis.getVoices());
++    }, 1000);
++    const changed = () => {
++      const voices = synthesis.getVoices();
++      if (voices.length) { cleanup(); resolve(voices); }
++    };
++    function cleanup() {
++      window.clearTimeout(timeout);
++      synthesis.removeEventListener("voiceschanged", changed);
++    }
++    synthesis.addEventListener("voiceschanged", changed);
++    changed();
++  });
++}

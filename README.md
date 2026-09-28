@@ -20,11 +20,11 @@ Open http://localhost:3000, create an account, and choose a practice set or full
 - A 140-question simulation with separate 35-, 25-, and 55-minute sections. Deadlines are enforced on the server; previous sections cannot be reopened.
 - SQLite persistence for answers, attempts, progress, and review after completion.
 - Section summaries, raw correct counts, percentages, transcript review, and explanations.
-- Responsive interface, question navigation, and browser speech synthesis for listening scripts.
+- Responsive interface, question navigation, and browser speech synthesis that assigns different available voices to `Man:` and `Woman:` dialogue lines when possible.
 
 ## Content and scoring boundaries
 
-The question bank is original demonstration content. Listening uses the browser's synthesized English voice, so pronunciation and playback differ across devices; a production exam-like experience needs properly licensed, human-recorded audio, an expanded and reviewed question bank, and a secure delivery workflow. Some longer listening and reading stimuli have several questions, as in a test, but the bank has not been psychometrically calibrated.
+The question bank is original demonstration content. Listening uses the browser's synthesized English voices. Since the browser does not expose voice gender, the app selects voices by common voice names and uses different pitches as a fallback. Voice availability, pronunciation, and playback differ across devices; a production exam-like experience needs properly licensed, human-recorded audio, an expanded and reviewed question bank, and a secure delivery workflow. Some longer listening and reading stimuli have several questions, as in a test, but the bank has not been psychometrically calibrated.
 
 The app intentionally does **not** calculate an official 310–677 TOEFL ITP score. ETS derives scaled section scores from correct answers using conversions for the test form; percentages from this original bank cannot be converted honestly into a certified score. The app also does not issue certificates. ETS publishes the Level 1 blueprint as Listening 50/35 minutes, Structure 40/25 minutes, and Reading 50/55 minutes: https://www.ets.org/toefl/itp/test-content.html ; scoring background: https://www.ets.org/toefl/itp/scoring.html .
 
