@@ -12,7 +12,7 @@ export function ExamClient({ id }: { id: string }) {
   const [error, setError] = useState("");
   const [index, setIndex] = useState(0);
   const [busy, setBusy] = useState(false);
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(0);
   const [speaking, setSpeaking] = useState(false);
   const refresh = useCallback(async () => {
     const response = await fetch(`/api/attempts/${id}`, { cache: "no-store" });
@@ -22,10 +22,19 @@ export function ExamClient({ id }: { id: string }) {
     if (result.status === "finished") { router.replace(`/result/${id}`); return; }
     setData(result); setIndex(0);
   }, [id, router]);
-  useEffect(() => { refresh().catch(cause => setError(String(cause))); }, [refresh]);
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      refresh().catch(cause => setError(String(cause)));
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [refresh]);
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   useEffect(() => {
-    if (data?.deadline && now >= data.deadline) refresh().catch(cause => setError(String(cause)));
+    if (!data?.deadline || now < data.deadline) return;
+    const timer = window.setTimeout(() => {
+      refresh().catch(cause => setError(String(cause)));
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [data?.deadline, now, refresh]);
   useEffect(() => () => { if (typeof window !== "undefined") window.speechSynthesis?.cancel(); }, []);
 
@@ -36,7 +45,7 @@ export function ExamClient({ id }: { id: string }) {
   const remaining = Math.max(0, (data?.deadline || 0) - now);
   const clock = `${Math.floor(remaining / 60000).toString().padStart(2, "0")}:${Math.floor((remaining % 60000) / 1000).toString().padStart(2, "0")}`;
   async function choose(choice: number) {
-    if (!data || !current || busy || (data.deadline && Date.now() >= data.deadline)) return;
+    if (!data || !current || busy || (data.deadline && now >= data.deadline)) return;
     setBusy(true); setError("");
     try {
       const response = await fetch(`/api/attempts/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ questionId: current.id, choice }) });

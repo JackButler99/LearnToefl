@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const labels = { listening: "Listening", structure: "Structure", reading: "Reading" };
 export default async function Home() {
   const user = await getUser();
-  const recent = user ? recentAttempts(user.id) : [];
+  const recent = user ? await recentAttempts(user.id) : [];
   return <main className="shell">
     <header className="topbar"><Link href="/" className="brand"><span className="brand-mark">I.</span> ITP Practice Lab</Link>
       <nav>{user ? <span className="account">Halo, {user.username}</span> : <Link href="/login" className="nav-link">Masuk / Daftar</Link>}{user && <DashboardActions logout />}</nav>

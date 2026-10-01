@@ -228,4 +228,8 @@ export const getQuestions = (mode: "full" | "practice", section?: Section) => {
   return [];
 };
 
-export const publicQuestion = ({ answer: _answer, explanation: _explanation, ...question }: Question): PublicQuestion => question;
+export const publicQuestion = ({ answer, explanation, ...question }: Question): PublicQuestion => {
+  void answer;
+  void explanation;
+  return question;
+};
