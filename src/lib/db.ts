@@ -2,6 +2,7 @@ import "server-only";
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
+import { migratePlatform } from "./schema";
 
 let singleton: DatabaseSync | undefined;
 export function db(): DatabaseSync {
@@ -30,6 +31,8 @@ export function db(): DatabaseSync {
     );
     CREATE INDEX IF NOT EXISTS attempts_user_idx ON attempts(user_id, started_at DESC);
   `);
+  try { migratePlatform(connection); }
+  catch (cause) { connection.close(); throw cause; }
   singleton = connection;
   return connection;
 }

@@ -10,7 +10,7 @@ export default async function Home() {
   const recent = user ? recentAttempts(user.id) : [];
   return <main className="shell">
     <header className="topbar"><Link href="/" className="brand"><span className="brand-mark">I.</span> ITP Practice Lab</Link>
-      <nav>{user ? <span className="account">Halo, {user.username}</span> : <Link href="/login" className="nav-link">Masuk / Daftar</Link>}{user && <DashboardActions logout />}</nav>
+      <nav>{user ? <><span className="account">Halo, {user.username}</span><Link className="nav-link" href={user.role === "admin" ? "/admin" : user.role === "instructor" ? "/instructor" : "/dashboard"}>Dashboard ↗</Link></> : <Link href="/login" className="nav-link">Masuk / Daftar</Link>}{user && <DashboardActions logout />}</nav>
     </header>
     <section className="hero"><div><span className="eyebrow">BELAJAR DENGAN ARAH YANG JELAS</span>
       <h1>Lebih siap menghadapi<br /><em>tes bahasa Inggris.</em></h1>

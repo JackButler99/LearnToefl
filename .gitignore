@@ -4,3 +4,6 @@ node_modules
 !.env.example
 data/
 *.tsbuildinfo
+backup-data*/
+test-results/
+next-env.d.ts

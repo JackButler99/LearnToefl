@@ -16,7 +16,7 @@ export function AuthForm() {
         body: JSON.stringify({ action: mode, username: form.get("username"), password: form.get("password") }) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Tidak dapat masuk.");
-      router.push("/"); router.refresh();
+      router.push(data.user?.role === "admin" ? "/admin" : data.user?.role === "instructor" ? "/instructor" : "/dashboard"); router.refresh();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Tidak dapat masuk."); setBusy(false); }
   }
   return <div className="auth-card"><Link href="/" className="back-link">← Kembali ke beranda</Link><span className="eyebrow">AKUN BELAJAR</span><h2>{mode === "register" ? "Mulai dari sini." : "Selamat datang kembali."}</h2><p>{mode === "register" ? "Simpan progresmu dan pelajari setiap hasil latihan." : "Lanjutkan latihanmu dari titik terakhir."}</p>

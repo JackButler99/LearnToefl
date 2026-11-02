@@ -5,13 +5,14 @@ import { db } from "./db";
 
 const COOKIE = "itp_session";
 const TWO_WEEKS = 14 * 24 * 60 * 60 * 1000;
-export type User = { id: string; username: string };
+export type Role = "student" | "instructor" | "admin";
+export type User = { id: string; username: string; role: Role };
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 
 export async function getUser(): Promise<User | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return null;
-  const row = db().prepare(`SELECT users.id, users.username FROM sessions
+  const row = db().prepare(`SELECT users.id, users.username, users.role FROM sessions
     JOIN users ON users.id = sessions.user_id
     WHERE sessions.token_hash = ? AND sessions.expires_at > ?`).get(digest(token), Date.now()) as User | undefined;
   return row || null;
@@ -35,7 +36,7 @@ export async function destroySession() {
 
 export function register(username: string, password: string): User {
   const salt = randomBytes(16).toString("hex");
-  const user = { id: randomUUID(), username };
+  const user: User = { id: randomUUID(), username, role: "student" };
   const hash = scryptSync(password, salt, 64).toString("hex");
   db().prepare("INSERT INTO users(id, username, salt, password_hash, created_at) VALUES (?, ?, ?, ?, ?)")
     .run(user.id, user.username, salt, hash, Date.now());
@@ -43,11 +44,11 @@ export function register(username: string, password: string): User {
 }
 
 export function authenticate(username: string, password: string): User | null {
-  const row = db().prepare("SELECT id, username, salt, password_hash FROM users WHERE username = ?")
+  const row = db().prepare("SELECT id, username, role, salt, password_hash FROM users WHERE username = ?")
     .get(username) as (User & { salt: string; password_hash: string }) | undefined;
   // Perform the same expensive operation even if the account does not exist.
   const candidate = scryptSync(password, row?.salt || "0".repeat(32), 64);
   const expected = Buffer.from(row?.password_hash || "0".repeat(128), "hex");
   if (!row || !timingSafeEqual(candidate, expected)) return null;
-  return { id: row.id, username: row.username };
+  return { id: row.id, username: row.username, role: row.role };
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { advanceAttempt, loadAttempt, saveAnswer, serializeAttempt } from "@/lib/attempts";
-import { checkOrigin, error, requireUser, respondError } from "@/lib/http";
+import { checkOrigin, error, requireUser, respondError, readBody } from "@/lib/http";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ id: string }> };
@@ -18,7 +18,7 @@ export async function PATCH(request: Request, context: Context) {
     const user = await requireUser();
     const row = loadAttempt((await context.params).id, user.id);
     if (!row) return error("Sesi tidak ditemukan.", 404);
-    const body = await request.json() as { questionId?: string; choice?: number | null };
+    const body = await readBody(request) as { questionId?: string; choice?: number | null };
     if (typeof body.questionId !== "string" || (body.choice !== null && typeof body.choice !== "number")) return error("Jawaban tidak valid.");
     saveAnswer(row, body.questionId, body.choice ?? null);
     return NextResponse.json({ ok: true, deadline: row.deadline });

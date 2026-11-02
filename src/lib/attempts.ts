@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { db } from "./db";
 import { getQuestions, publicQuestion, type Section } from "./questions";
+import { recordPracticeEvent } from "./experiments";
 
 export const SECTIONS: Section[] = ["listening", "structure", "reading"];
 export const DURATIONS = { listening: 35 * 60_000, structure: 25 * 60_000, reading: 55 * 60_000 };
@@ -9,16 +10,17 @@ export type Mode = "full" | "practice";
 type AttemptRow = {
   id: string; user_id: string; mode: Mode; section: Section | null;
   status: "active" | "finished"; section_index: number;
-  started_at: number; deadline: number | null; finished_at: number | null; answers: string;
+  started_at: number; deadline: number | null; finished_at: number | null; answers: string; assignment_id: string | null;
 };
 
-export function createAttempt(userId: string, mode: Mode, section?: Section) {
+export function createAttempt(userId: string, mode: Mode, section?: Section, assignmentId?: string) {
   if (mode === "practice" && (!section || !SECTIONS.includes(section))) throw new Error("Invalid practice section");
   const id = randomUUID();
   const now = Date.now();
-  db().prepare(`INSERT INTO attempts(id, user_id, mode, section, status, section_index, started_at, deadline)
-    VALUES (?, ?, ?, ?, 'active', 0, ?, ?)`).run(id, userId, mode, mode === "practice" ? section! : null,
-    now, mode === "full" ? now + DURATIONS.listening : null);
+  db().prepare(`INSERT INTO attempts(id, user_id, mode, section, status, section_index, started_at, deadline,assignment_id)
+    VALUES (?, ?, ?, ?, 'active', 0, ?, ?, ?)`).run(id, userId, mode, mode === "practice" ? section! : null,
+    now, mode === "full" ? now + DURATIONS.listening : null,assignmentId ?? null);
+  if (mode === "practice" && !assignmentId) recordPracticeEvent(userId,"start",now);
   return id;
 }
 
@@ -28,6 +30,11 @@ function finish(row: AttemptRow, when: number) {
   row.status = "finished";
   row.finished_at = when;
   row.deadline = null;
+  if (row.mode === "practice" && !row.assignment_id) {
+    const questions = getQuestions(row.mode,row.section!);
+    const answers = JSON.parse(row.answers) as Record<string,number>;
+    if (questions.every(q=>answers[q.id] !== undefined)) recordPracticeEvent(row.user_id,"complete",when,row.started_at);
+  }
 }
 
 function nextSection(row: AttemptRow, when: number) {
