@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./typography.css";
+import "./disclosure.css";
+import "./bank.css";
+import "./reading.css";
 
 export const metadata: Metadata = {
   title: "ITP Practice Lab",

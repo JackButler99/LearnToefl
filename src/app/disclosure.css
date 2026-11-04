@@ -1,0 +1,123 @@
+/* Native accordions share a header/body boundary and keyboard behavior. */
+details.disclosure,
+.platform details.disclosure {
+  margin: 16px 0 0;
+  padding: 0;
+  min-width: 0;
+  width: 100%;
+  border: 1px solid #d6e1d9;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 3px #18392904;
+}
+.disclosure > .disclosure-summary {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 76px;
+  margin: 0;
+  padding: 20px 24px;
+  border: 0;
+  border-radius: 13px;
+  list-style: none;
+  cursor: pointer;
+  color: #243e2f;
+  text-align: left;
+  transition: background-color .15s;
+}
+.disclosure > .disclosure-summary::marker { content: ""; }
+.disclosure > .disclosure-summary::-webkit-details-marker { display: none; }
+.disclosure > .disclosure-summary::after { content: none; }
+.disclosure > .disclosure-summary:hover { background: #f4f8f5; }
+.disclosure > .disclosure-summary:focus-visible {
+  outline: 3px solid #2b7351;
+  outline-offset: 3px;
+  background: #f0f6f2;
+}
+.disclosure-summary-main { display: block; flex: 1; min-width: 0; }
+.disclosure-title {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: .9375rem;
+  font-weight: 600;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.disclosure-title > span:not([class]) { flex: 1; min-width: 140px; }
+.disclosure-title > .status-badge { align-self: center; flex: 0 1 auto; margin: 0; }
+.disclosure .disclosure-title strong { display: block; font-size: 1rem; font-weight: 600; line-height: 1.7; }
+.disclosure .disclosure-title small, .disclosure-title .eyebrow {
+  display: block;
+  margin: 0 0 6px;
+  font-size: .75rem;
+  font-weight: 500;
+  line-height: 1.6;
+  color: #52645a;
+}
+.disclosure-description { display: block; margin-top: 4px; color: #52645a; font-size: .875rem; font-weight: 400; line-height: 1.7; }
+.disclosure-meta { flex-shrink: 0; }
+.disclosure > .disclosure-summary > .disclosure-chevron {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  flex: 0 0 32px;
+  background: #f1f5f2;
+  color: #456750;
+  border: 1px solid #dee8e0;
+  border-radius: 8px;
+}
+.disclosure-chevron svg { transition: transform .18s; }
+.disclosure[open] > .disclosure-summary { border-radius: 13px 13px 0 0; background: #f5f9f6; }
+.disclosure[open] > .disclosure-summary .disclosure-chevron svg { transform: rotate(180deg); }
+.disclosure > .disclosure-body { min-width: 0; padding: 24px; border-top: 1px solid #e1e9e3; }
+.disclosure-body > :first-child { margin-top: 0; }
+.disclosure-body > :last-child { margin-bottom: 0; }
+.disclosure-body > p { font-size: .9375rem; line-height: 1.8; color: #52645a; }
+.disclosure-body .review-detail { padding: 0; margin: 0; border: 0; }
+.disclosure-body .review-detail p { font-size: 1rem; line-height: 1.8; }
+.disclosure-body .action-grid {
+  grid-template-columns: 1fr;
+  gap: 20px;
+  margin: 0;
+}
+.disclosure-body .action-feature { min-height: 0; padding: 26px; gap: 16px; }
+.disclosure-body .action-feature h3 { font-size: 1.5rem; line-height: 1.35; margin: 0; }
+.disclosure-body .action-feature p { margin: 0; max-width: 62ch; }
+.disclosure-body .action-feature .button { margin-top: 4px; }
+.disclosure-body .practice-card { padding: 18px; gap: 14px; min-width: 0; }
+.disclosure-body .practice-card > span:nth-child(2) { flex: 1; min-width: 0; }
+.disclosure-body .practice-card strong { font-size: .9375rem; overflow-wrap: anywhere; }
+.disclosure-body .round-arrow { flex-shrink: 0; }
+.bank-list .bank-disclosure { margin-top: 12px; }
+.bank-list .bank-disclosure:first-child { margin-top: 0; }
+.disclosure.bank-disclosure ol { padding-left: 24px; font-size: .9375rem; line-height: 1.8; }
+.disclosure.result-review > .disclosure-summary { padding-bottom: 20px; border-bottom: 0; margin-bottom: 0; }
+.disclosure.review-item > .disclosure-summary { padding: 20px 24px; }
+.disclosure .review-status, .disclosure .review-indicator { flex-shrink: 0; }
+.disclosure-body .platform-form { margin-top: 20px; }
+.disclosure-body > .platform-form:first-child { margin-top: 0; }
+.question-editor > .disclosure { flex-basis: 100%; }
+
+@media (max-width: 600px) {
+  .disclosure > .disclosure-summary, .disclosure.review-item > .disclosure-summary { padding: 18px; gap: 14px; }
+  .disclosure > .disclosure-body { padding: 20px 18px; }
+  .disclosure-title { font-size: .9375rem; gap: 10px; }
+  .disclosure .disclosure-title strong { font-size: .9375rem; }
+  .disclosure-title > span:not([class]) { min-width: 100px; }
+  .disclosure-summary-main { min-width: 0; }
+  .disclosure-description { font-size: .8125rem; }
+  .disclosure-body .action-feature { padding: 22px; }
+  .disclosure-body .practice-card { padding: 16px 12px; gap: 10px; }
+  .disclosure-body .practice-index { display: none; }
+  .disclosure-body .round-arrow { width: 30px; height: 30px; }
+  .disclosure-body .platform-form > button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .disclosure > .disclosure-summary, .disclosure-chevron svg { transition: none; }
+}

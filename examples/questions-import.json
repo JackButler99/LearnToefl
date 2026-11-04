@@ -1,0 +1,25 @@
+[
+  {
+    "examId": "casn-tiu",
+    "section": "numerik",
+    "kind": "text",
+    "skill": "persentase-dasar",
+    "stimulus": "Sebuah kelas memiliki 40 peserta. Sebanyak 25% peserta memilih sesi pagi.",
+    "prompt": "Berapa peserta yang memilih sesi pagi?",
+    "options": ["5", "10", "15", "20", "25"],
+    "answer": 1,
+    "explanation": "25% = 1/4. Seperempat dari 40 adalah 10. Ini contoh untuk menguji alur aplikasi; belum dikalibrasi sebagai soal ujian resmi.",
+    "scores": [0, 1, 0, 0, 0]
+  },
+  {
+    "examId": "casn-tiu",
+    "section": "numerik",
+    "kind": "text",
+    "skill": "rasio-dasar",
+    "stimulus": "Rasio jumlah buku merah dan biru adalah 2:3. Totalnya 25 buku.",
+    "prompt": "Berapa jumlah buku biru?",
+    "options": ["5", "10", "15", "20", "25"],
+    "answer": 2,
+    "explanation": "Ada 2+3=5 bagian. Satu bagian berisi 25/5=5 buku. Buku biru berjumlah 3 bagian, sehingga 3×5=15. Contoh ini untuk verifikasi aplikasi, bukan soal resmi."
+  }
+]

@@ -1,5 +1,11 @@
 # ITP Practice Lab
 
+## Pengembangan MVP
+
+- [Dashboard dan eksperimen A/B](docs/MVP-PANDUAN.md)
+- [Bank soal, multi-ujian, paket instruktur, dan analitik](docs/FITUR-1-4-PANDUAN.md)
+- Contoh impor soal: `examples/questions-import.json`.
+
 A Next.js full-stack learning app for independent practice in the **TOEFL ITP Level 1 format**. Interface copy is in Indonesian; all 140 questions and explanations are original English practice content. This is an independent study tool, not an ETS test or certificate.
 
 ## Run locally
@@ -40,3 +46,25 @@ Run on a persistent **Node.js server** with a writable `DATA_DIR`. Do not deploy
 - `src/lib/attempts.ts`: section timing, persistence, and raw result calculation.
 - `src/app/api`: HTTP endpoints.
 - `src/components`: interactive dashboard, exam, and review.
+
+## UI/UX upgrade
+
+Panduan pemasangan dan pemeriksaan: [docs/UI-UX-PANDUAN.md](docs/UI-UX-PANDUAN.md).
+
+Penyempurnaan font dan tampilan: [docs/TIPOGRAFI-PANDUAN.md](docs/TIPOGRAFI-PANDUAN.md).
+
+Perapian komponen lipat: [docs/ACCORDION-PANDUAN.md](docs/ACCORDION-PANDUAN.md).
+
+Tampilan Bank Soal dan impor file: [docs/BANK-SOAL-UI-PANDUAN.md](docs/BANK-SOAL-UI-PANDUAN.md).
+
+Rincian jumlah soal per ujian/bagian: [docs/BANK-METRIK-PANDUAN.md](docs/BANK-METRIK-PANDUAN.md).
+
+Pengamanan impor JSON dan konfigurasi APP_ORIGIN: [docs/IMPORT-SECURITY-PANDUAN.md](docs/IMPORT-SECURITY-PANDUAN.md).
+
+Ekspor bank soal khusus admin untuk audit: [docs/BANK-EKSPOR-PANDUAN.md](docs/BANK-EKSPOR-PANDUAN.md).
+
+Pemisahan daftar Draf, Review, dan Terbit: [docs/BANK-STATUS-PANDUAN.md](docs/BANK-STATUS-PANDUAN.md).
+
+Mengubah akses paket Privat/Publik dan installer yang mengenali paket publik: [docs/PAKET-AKSES-PANDUAN.md](docs/PAKET-AKSES-PANDUAN.md).
+
+Judul, paragraf, dan catatan sumber Reading: [docs/READING-PANDUAN.md](docs/READING-PANDUAN.md).

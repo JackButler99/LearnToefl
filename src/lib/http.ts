@@ -25,13 +25,18 @@ export function checkOrigin(request: Request) {
   }
 }
 
-export async function readBody(request: Request): Promise<Record<string,unknown>> {
-  if (Number(request.headers.get("content-length")||0)>24_000) throw new HttpError("Permintaan terlalu besar.",413);
+export async function readBody(request: Request, maxBytes=24_000, options: { timeoutMs?: number; strictUtf8?: boolean; beforeParse?: (text: string) => void } = {}): Promise<Record<string,unknown>> {
+  if (Number(request.headers.get("content-length")||0)>maxBytes) throw new HttpError("Permintaan terlalu besar.",413);
   const reader=request.body?.getReader();
   if (!reader) throw new HttpError("Isi permintaan diperlukan.",400);
-  const decoder=new TextDecoder();let text="",bytes=0;
-  try {for(;;){const {done,value}=await reader.read();if(done)break;bytes+=value.byteLength;if(bytes>24_000){await reader.cancel();throw new HttpError("Permintaan terlalu besar.",413);}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}
-  finally{reader.releaseLock();}
+  const decoder=new TextDecoder("utf-8",{fatal:options.strictUtf8??false});let text="",bytes=0;
+  let timer:ReturnType<typeof setTimeout>|undefined;
+  const deadline=options.timeoutMs===undefined?undefined:new Promise<never>((_,reject)=>{timer=setTimeout(()=>{reject(new HttpError("Waktu pembacaan permintaan habis.",408));void reader.cancel().catch(()=>{});},options.timeoutMs);});
+  try {
+    for(;;){const {done,value}=await (deadline?Promise.race([reader.read(),deadline]):reader.read());if(done)break;bytes+=value.byteLength;if(bytes>maxBytes){await reader.cancel();throw new HttpError("Permintaan terlalu besar.",413);}try{text+=decoder.decode(value,{stream:true});}catch{throw new HttpError("Isi permintaan bukan UTF-8 yang valid.",400);}}
+    try{text+=decoder.decode();}catch{throw new HttpError("Isi permintaan bukan UTF-8 yang valid.",400);}
+  } finally{if(timer)clearTimeout(timer);reader.releaseLock();}
+  options.beforeParse?.(text);
   const body=JSON.parse(text);
   if(!body||typeof body!=="object"||Array.isArray(body))throw new HttpError("Format permintaan tidak valid.",400);
   return body;
