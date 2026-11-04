@@ -1,0 +1,292 @@
+/* Demo typography. One reading scale for English and Bahasa Indonesia.
+   Illustration lettering is decorative and remains in demo-studio.css. */
+.demo-app {
+  --font-ui: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --type-ink: #203a30;
+  --type-muted: #52645a;
+  --type-soft: #5e7065;
+  --type-xs: .75rem;
+  --type-sm: .8125rem;
+  --type-label: .875rem;
+  --type-body: .9375rem;
+  --type-reading: 1.0625rem;
+  --type-h1: clamp(1.75rem, 1.25rem + 1.3vw, 2.375rem);
+  --type-h2: clamp(1.25rem, 1.1rem + .45vw, 1.5rem);
+  --type-h3: 1.125rem;
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+  color: var(--type-ink);
+  font-synthesis: none;
+}
+.demo-app :is(h1, h2, h3, p, blockquote) { overflow-wrap: break-word; }
+.demo-app :is(h1, h2, h3) {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+  color: var(--type-ink);
+}
+.demo-app h1 { font-size: var(--type-h1); line-height: 1.2; letter-spacing: -.035em; }
+.demo-app h2 { font-size: var(--type-h2); }
+.demo-app h3 { font-size: var(--type-h3); font-weight: 600; letter-spacing: -.015em; }
+.demo-app p { font-size: var(--type-body); line-height: 1.75; color: var(--type-muted); }
+.demo-app :is(strong, b) { font-weight: 600; }
+.demo-app small { font-size: var(--type-sm); line-height: 1.6; }
+.demo-app :is(button, input, select, textarea) {
+  font-family: var(--font-ui);
+  font-size: var(--type-label);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.demo-app button { font-weight: 600; }
+.demo-app :is(input, select, textarea) { font-size: 1rem; }
+.demo-app :is(input, textarea)::placeholder { color: #66776c; opacity: 1; }
+.demo-app .button { font-size: var(--type-label); font-weight: 600; line-height: 1.5; min-height: 46px; }
+.demo-app :is(.eyebrow, .studio-hero-eyebrow, .studio-audio-kicker) {
+  font-size: var(--type-xs);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: .08em;
+  color: var(--type-soft);
+}
+
+/* Navigation and utility controls use the same readable label sizes. */
+.demo-app .demo-sidebar .brand { font-size: 1rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.4; color: #f6f8f2; }
+.demo-app .demo-sidebar .brand small { font-size: var(--type-xs); font-weight: 400; letter-spacing: 0; line-height: 1.6; color: #c0d1c4; }
+.demo-app .demo-product-label { font-size: .6875rem; font-weight: 600; letter-spacing: .06em; line-height: 1.6; color: #c4d8bf; }
+.demo-app .demo-sidebar nav > p { font-size: var(--type-xs); font-weight: 600; line-height: 1.5; letter-spacing: .06em; color: #b6ccba; }
+.demo-app .demo-sidebar nav button { font-size: var(--type-label); line-height: 1.5; font-weight: 500; color: #dae5da; white-space: normal; text-align: left; }
+.demo-app .demo-sidebar nav button[aria-current] { font-weight: 700; color: #234b34; }
+.demo-app .demo-sidebar-note strong { font-size: var(--type-sm); font-weight: 600; line-height: 1.55; max-width: none; color: #e0ecd6; }
+.demo-app .demo-sidebar-note p { font-size: var(--type-xs); line-height: 1.7; max-width: none; color: #c2d5bd; }
+.demo-app .demo-person strong { font-size: var(--type-sm); color: #edf3e5; }
+.demo-app .demo-person small { font-size: var(--type-xs); line-height: 1.55; color: #bed0b8; }
+.demo-app .demo-avatar { font-size: var(--type-xs); font-weight: 700; letter-spacing: 0; }
+.demo-app .demo-menu-toggle { font-size: var(--type-label); color: #dce9cf; }
+.demo-app .demo-banner { font-size: var(--type-sm); }
+.demo-app .demo-banner strong { font-size: var(--type-xs); font-weight: 700; letter-spacing: 0; color: #365842; }
+.demo-app .demo-banner > div > span:last-child { font-size: var(--type-sm); color: var(--type-muted); }
+.demo-app .studio-persona button { font-size: var(--type-sm); font-weight: 600; line-height: 1.5; min-height: 40px; color: #405a49; }
+.demo-app .studio-persona button[aria-pressed="true"] { color: #f6f8ee; }
+.demo-app .studio-persona svg { width: 16px; height: 16px; flex-shrink: 0; }
+.demo-app .demo-language { font-size: var(--type-sm); color: #365344; }
+.demo-app .demo-language > select { font-size: var(--type-label); line-height: 1.5; min-height: 42px; max-width: 185px; }
+.demo-app .demo-top { font-size: var(--type-sm); flex-wrap: wrap; padding-block: 14px; }
+.demo-app .demo-top > span { font-size: var(--type-sm); color: var(--type-soft); }
+.demo-app .demo-top strong { font-weight: 600; color: #355443; }
+.demo-app .demo-top :is(button, a) { font-size: var(--type-sm); font-weight: 500; line-height: 1.5; color: #405d49; }
+.demo-app .demo-footer { font-size: var(--type-xs); line-height: 1.7; color: var(--type-muted); }
+
+/* Page introductions and the hero share a restrained heading system. */
+.demo-app :is(.studio-welcome h1, .demo-heading h1, .demo-practice-heading h1, .demo-result-hero h1) {
+  font-family: var(--font-ui);
+  font-size: var(--type-h1);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.035em;
+  color: var(--type-ink);
+}
+.demo-app :is(.studio-welcome p, .demo-heading p, .demo-practice-heading p) {
+  font-size: var(--type-body);
+  line-height: 1.75;
+  max-width: 68ch;
+  color: var(--type-muted);
+}
+.demo-app .studio-welcome-stamp { font-family: var(--font-ui); font-size: var(--type-sm); font-style: normal; font-weight: 500; color: #56694c; }
+.demo-app .studio-hero h2 {
+  font-size: clamp(2rem, 1.35rem + 1.8vw, 3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+  color: #f5f8ef;
+}
+.demo-app .studio-hero h2 em { font-family: inherit; font-size: inherit; font-style: normal; font-weight: inherit; line-height: inherit; letter-spacing: inherit; color: #d9ecaa; }
+.demo-app .studio-hero p { font-size: var(--type-body); line-height: 1.75; max-width: 42ch; color: #d1dfc9; }
+.demo-app .studio-hero-eyebrow { color: #d6e6c4; }
+.demo-app .studio-hero-meta { font-size: var(--type-xs); line-height: 1.6; color: #d4e3c9; flex-wrap: wrap; gap: 10px 18px; }
+.demo-app .studio-lime-button { font-size: var(--type-label); font-weight: 700; }
+.demo-app .studio-hero-copy { max-width: 72%; }
+
+/* Numeric summaries: aligned digits, modest weight, and real captions. */
+.demo-app .demo-metrics small { font-size: var(--type-sm); font-weight: 600; line-height: 1.5; color: var(--type-muted); }
+.demo-app .demo-metrics article > strong { font-size: clamp(1.875rem, 1.6rem + .65vw, 2.25rem); font-weight: 600; line-height: 1.2; letter-spacing: -.025em; font-variant-numeric: lining-nums tabular-nums; color: #2b543b; }
+.demo-app .demo-metrics article > span { font-size: var(--type-xs); line-height: 1.65; max-width: 100%; color: var(--type-muted); }
+.demo-app .demo-metrics article { gap: 12px; }
+.demo-app .studio-metric-spark { opacity: .5; }
+.demo-app .demo-panel-head h2 { font-size: var(--type-h3); font-weight: 700; line-height: 1.4; letter-spacing: -.02em; color: #2b4836; }
+.demo-app .demo-panel-head p { font-size: var(--type-sm); line-height: 1.65; color: var(--type-muted); }
+.demo-app .studio-mini-tag { font-size: .6875rem; font-weight: 600; line-height: 1.5; letter-spacing: .04em; color: #526943; white-space: normal; }
+.demo-app .studio-momentum-heading > strong { font-size: 2.25rem; font-weight: 600; line-height: 1.1; letter-spacing: -.025em; font-variant-numeric: tabular-nums; color: #355a3c; }
+.demo-app .studio-momentum-heading small { font-size: var(--type-xs); font-weight: 400; line-height: 1.5; letter-spacing: 0; color: var(--type-muted); }
+.demo-app .studio-momentum-heading > span { font-size: var(--type-xs); line-height: 1.5; color: #4d663b; }
+.demo-app .studio-momentum-chart { max-width: 26rem; margin-inline: auto; }
+.demo-app .studio-momentum-chart svg { max-height: none; }
+.demo-app .studio-momentum-days button { font-size: var(--type-xs); font-weight: 500; line-height: 1.5; min-width: 30px; min-height: 36px; padding-inline: 3px; color: var(--type-muted); }
+.demo-app .studio-momentum-days button[aria-pressed="true"] { font-weight: 700; color: #355638; }
+.demo-app .studio-momentum-detail { font-size: var(--type-xs); line-height: 1.6; flex-wrap: wrap; gap: 4px 12px; color: var(--type-muted); }
+.demo-app .studio-momentum-detail strong { font-weight: 600; color: #3b5e3a; }
+
+/* Learning cards, activity rows, and management screens. */
+.demo-app .studio-section-heading h2 { font-size: var(--type-h2); font-weight: 700; line-height: 1.35; letter-spacing: -.025em; }
+.demo-app .studio-section-heading > button { font-size: var(--type-sm); line-height: 1.6; font-weight: 600; color: #3d6243; }
+.demo-app .studio-path-kicker { font-size: .6875rem; font-weight: 600; line-height: 1.6; letter-spacing: .045em; color: #536c45; }
+.demo-app .studio-path-body h3 { font-size: 1.375rem; font-weight: 700; line-height: 1.3; letter-spacing: -.025em; color: #315237; }
+.demo-app .studio-path-body p { font-size: var(--type-label); line-height: 1.75; min-height: 0; color: var(--type-muted); }
+.demo-app .studio-path-footer { font-size: var(--type-xs); font-weight: 500; line-height: 1.65; color: #4d6741; }
+.demo-app .studio-path-footer > span { max-width: none; }
+.demo-app .studio-path-card { display: flex; flex-direction: column; }
+.demo-app .studio-path-body { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.demo-app .studio-path-footer { margin-top: auto; }
+.demo-app .demo-activity { font-size: var(--type-label); line-height: 1.6; }
+.demo-app .demo-activity strong { font-weight: 600; color: #2d4c38; }
+.demo-app .demo-activity small { font-size: var(--type-xs); line-height: 1.6; color: var(--type-muted); }
+.demo-app .demo-badge { font-size: var(--type-xs); font-weight: 600; line-height: 1.5; letter-spacing: 0; color: #49653b; }
+.demo-app .demo-badge.published { color: #35602d; }
+.demo-app .demo-badge.review { color: #75521b; }
+.demo-app .demo-badge.draft { color: #4f6050; }
+.demo-app .demo-shortcuts button > span:nth-child(2) { font-size: var(--type-label); font-weight: 600; line-height: 1.55; color: #355439; }
+.demo-app .demo-shortcuts small { font-size: var(--type-xs); font-weight: 400; line-height: 1.65; color: var(--type-muted); }
+.demo-app .studio-note-card blockquote { font-family: var(--font-ui); font-size: clamp(1.375rem, 1.1rem + .6vw, 1.75rem); font-style: normal; font-weight: 500; line-height: 1.45; letter-spacing: -.02em; color: #415c32; }
+.demo-app .studio-note-card > p { font-size: var(--type-label); line-height: 1.75; max-width: 40ch; color: #526742; }
+.demo-app .studio-note-card > button { font-size: var(--type-sm); font-weight: 600; line-height: 1.6; color: #3f5f30; }
+.demo-app :is(.studio-sample-note, .demo-footnote) { font-size: var(--type-xs); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-package h2 { font-size: 1.5rem; font-weight: 700; line-height: 1.3; letter-spacing: -.025em; color: #315237; }
+.demo-app .demo-package > p { font-size: var(--type-body); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-package > .demo-package-facts { font-size: var(--type-sm); line-height: 1.65; color: var(--type-muted); }
+.demo-app .demo-package-id { font-size: .6875rem; line-height: 1.5; font-weight: 600; letter-spacing: .05em; }
+.demo-app .demo-tabs button { font-size: var(--type-label); font-weight: 600; line-height: 1.5; min-height: 44px; color: #48613d; }
+.demo-app .demo-tabs button[aria-pressed="true"] { color: #f1f6e8; }
+.demo-app .demo-filters label { font-size: var(--type-label); font-weight: 600; line-height: 1.55; color: #405b3c; }
+.demo-app .demo-filters :is(input, select) { font-size: 1rem; font-weight: 400; line-height: 1.5; color: var(--type-ink); min-height: 48px; }
+.demo-app .demo-result-count { font-size: var(--type-sm); line-height: 1.6; color: var(--type-muted); }
+.demo-app .demo-bank-item summary strong { font-size: var(--type-body); font-weight: 600; line-height: 1.6; color: #2f5036; }
+.demo-app .demo-bank-item summary small { font-size: var(--type-sm); line-height: 1.7; color: var(--type-muted); }
+.demo-app .demo-question-id { font-size: var(--type-xs); font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.6; letter-spacing: .02em; color: #526c41; }
+.demo-app table { font-size: var(--type-label); line-height: 1.6; }
+.demo-app th { font-size: var(--type-sm); font-weight: 600; line-height: 1.6; letter-spacing: 0; color: #445e3c; }
+.demo-app td { font-size: var(--type-label); line-height: 1.65; font-variant-numeric: tabular-nums; color: #40563a; }
+.demo-app .demo-learner strong { font-size: var(--type-label); font-weight: 600; color: #355134; }
+.demo-app .demo-checklist strong { font-size: var(--type-label); line-height: 1.6; }
+.demo-app .demo-checklist small { font-size: var(--type-sm); line-height: 1.7; color: var(--type-muted); }
+.demo-app .demo-insight h3 { font-family: var(--font-ui); font-size: 1.5rem; font-style: normal; font-weight: 600; line-height: 1.4; letter-spacing: -.02em; color: #3c6031; }
+.demo-app :is(.demo-insight p, .demo-explainer-grid p, .demo-experiment-plan p) { font-size: var(--type-body); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-explainer-grid h3 { font-size: var(--type-h3); font-weight: 600; line-height: 1.5; }
+.demo-app .demo-experiment-plan h2 { font-size: var(--type-h2); line-height: 1.4; font-weight: 600; color: #315237; }
+.demo-app .demo-range { font-size: var(--type-label); line-height: 1.6; color: #48633c; }
+.demo-app .demo-range strong { font-size: 2rem; font-weight: 600; line-height: 1.25; letter-spacing: -.025em; font-variant-numeric: tabular-nums; color: #3d6630; }
+.demo-app .demo-variant strong { font-size: var(--type-label); font-weight: 600; line-height: 1.5; }
+.demo-app .demo-variant > strong { font-size: 1.75rem; line-height: 1.2; font-variant-numeric: tabular-nums; color: #466e30; }
+.demo-app .demo-variant small { font-size: var(--type-sm); line-height: 1.6; color: var(--type-muted); }
+.demo-app .demo-experiment-diff strong { font-size: 1.5rem; line-height: 1.4; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: #466e30; }
+.demo-app .demo-experiment-diff :is(small, span) { font-size: var(--type-sm); line-height: 1.7; color: var(--type-muted); }
+.demo-app .demo-decision h2 { font-size: var(--type-h3); line-height: 1.45; font-weight: 700; color: #705523; }
+.demo-app .demo-decision p { font-size: var(--type-label); line-height: 1.7; color: #705523; }
+.demo-app .demo-decision small { font-size: var(--type-sm); line-height: 1.7; color: #705523; }
+.demo-app .demo-decision.ready :is(h2, p, small) { color: #3e6033; }
+
+/* The test is a reading surface: generous lines, clear choices, stable numbers. */
+.demo-app .demo-back { font-size: var(--type-label); font-weight: 500; line-height: 1.6; color: #47663b; }
+.demo-app .demo-practice-progress strong { font-size: 1.75rem; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; color: #3c6330; }
+.demo-app .demo-practice-progress small { font-size: var(--type-xs); line-height: 1.6; color: var(--type-muted); }
+.demo-app .demo-question-meta { font-size: var(--type-sm); font-weight: 500; line-height: 1.6; color: #4c6840; }
+.demo-app :is(.demo-quiz-card h2, .demo-review-card h3, .demo-question-preview h3) { font-size: clamp(1.125rem, 1.05rem + .3vw, 1.25rem); font-weight: 600; line-height: 1.65; letter-spacing: -.01em; text-wrap: pretty; color: var(--type-ink); }
+.demo-app .demo-answer-options label { font-size: 1rem; font-weight: 400; line-height: 1.65; color: var(--type-ink); padding-block: 16px; }
+.demo-app .demo-answer-options label.selected { color: #284f2e; }
+.demo-app .demo-answer-letter { font-size: var(--type-label); font-weight: 600; line-height: 1; color: #4b653a; flex-shrink: 0; }
+.demo-app .demo-answer-options label.selected .demo-answer-letter { color: #fff; }
+.demo-app .demo-passage { font-size: var(--type-reading); line-height: 1.85; color: #304638; }
+.demo-app .demo-passage p { font-size: inherit; line-height: inherit; letter-spacing: 0; max-width: 68ch; margin-inline: auto; margin-block: 0 1.1em; color: inherit; }
+.demo-app .demo-passage p:last-child { margin-bottom: 0; }
+.demo-app .demo-passage-title { font-size: var(--type-xs); font-weight: 700; line-height: 1.6; letter-spacing: .08em; color: #536d43; }
+.demo-app .demo-quiz-navigation h2 { font-size: 1rem; font-weight: 700; line-height: 1.5; color: #3c5d30; }
+.demo-app .demo-quiz-navigation p { font-size: var(--type-sm); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-quiz-navigation button { font-size: var(--type-label); font-weight: 600; font-variant-numeric: tabular-nums; min-width: 42px; min-height: 42px; color: #4e6a3b; }
+.demo-app .demo-quiz-navigation button.answered { color: #45682f; }
+.demo-app .demo-quiz-navigation > small { font-size: var(--type-xs); line-height: 1.6; }
+.demo-app .demo-quiz-controls .button { font-size: var(--type-label); line-height: 1.5; }
+.demo-app .demo-finish-confirm { font-size: var(--type-label); line-height: 1.7; color: #725421; }
+.demo-app .demo-finish-confirm p { font-size: var(--type-label); line-height: 1.7; color: inherit; }
+.demo-app .demo-result-hero > p { font-size: var(--type-body); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-result-score > strong { font-size: clamp(3.5rem, 3rem + 2vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -.04em; font-variant-numeric: lining-nums tabular-nums; color: #456c31; }
+.demo-app .demo-result-score > strong small { font-size: 1.75rem; font-weight: 500; line-height: 1.3; letter-spacing: 0; color: #5d754d; }
+.demo-app .demo-review-card > p { font-size: var(--type-body); line-height: 1.75; color: var(--type-muted); }
+.demo-app .demo-question-preview { font-size: 1rem; line-height: 1.8; }
+.demo-app .demo-question-preview ol { font-size: 1rem; line-height: 1.8; color: #304638; }
+.demo-app .demo-question-preview li { margin-bottom: .5em; }
+.demo-app .demo-transcript { font-size: 1rem; line-height: 1.8; color: #344e2d; }
+.demo-app .demo-explanation { font-size: var(--type-body); line-height: 1.8; color: #425e35; }
+.demo-app .demo-explanation strong { font-size: var(--type-label); font-weight: 700; line-height: 1.6; color: #3e5b31; }
+.demo-app .demo-explanation p { font-size: inherit; line-height: inherit; max-width: 68ch; color: inherit; }
+
+/* Listening controls should be as readable as the question itself. */
+.demo-app .studio-audio-caption { font-size: var(--type-xs); line-height: 1.6; color: var(--type-muted); }
+.demo-app .studio-speakers strong { font-size: var(--type-label); font-weight: 600; line-height: 1.5; color: #3d5d32; }
+.demo-app .studio-speakers small { font-size: var(--type-xs); line-height: 1.6; color: var(--type-muted); }
+.demo-app .studio-audio-controls strong { font-size: var(--type-label); font-weight: 600; line-height: 1.5; color: #3d5e30; }
+.demo-app .studio-audio-controls small { font-size: var(--type-xs); line-height: 1.65; color: var(--type-muted); }
+.demo-app .studio-play { width: 46px; height: 46px; flex: 0 0 46px; }
+.demo-app .studio-audio :is(.demo-text-button, .studio-voice-settings summary) { font-size: var(--type-sm); line-height: 1.65; font-weight: 600; color: #466632; }
+.demo-app .studio-voice-settings { font-size: var(--type-sm); line-height: 1.65; }
+.demo-app .studio-voice-settings label { font-size: var(--type-label); font-weight: 600; line-height: 1.55; color: #466332; }
+.demo-app .studio-voice-settings select { font-size: 1rem; font-weight: 400; line-height: 1.5; min-height: 46px; color: #38522a; }
+.demo-app .studio-voice-settings small { font-size: var(--type-xs); line-height: 1.75; color: var(--type-muted); }
+.demo-app .studio-dialogue-transcript span { font-size: var(--type-xs); font-weight: 600; line-height: 1.6; letter-spacing: .03em; text-transform: none; color: #4c683d; }
+.demo-app .studio-dialogue-transcript p { font-size: 1rem; line-height: 1.8; max-width: 65ch; color: #344e2d; }
+.demo-app .studio-voice-note { font-size: var(--type-sm); line-height: 1.75; color: #725724; }
+.demo-app .studio-audio-disclosure { font-size: var(--type-xs); line-height: 1.7; letter-spacing: 0; color: var(--type-muted); }
+
+/* Accommodate larger copy; mobile keeps the reading sizes instead of shrinking them. */
+@media (min-width: 901px) {
+  .demo-app .demo-sidebar { overflow-y: auto; scrollbar-width: thin; }
+}
+@media (max-width: 1250px) {
+  .demo-app .studio-hero-row { grid-template-columns: minmax(0, 1fr); }
+  .demo-app .studio-hero-copy { max-width: 70%; }
+  .demo-app .studio-hero-art { width: 35%; opacity: .6; }
+  .demo-app .studio-paths { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .demo-app .studio-hero-row > .demo-panel { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); column-gap: 24px; }
+  .demo-app .studio-hero-row > .demo-panel > .demo-panel-head { grid-column: 1; grid-row: 1; }
+  .demo-app .studio-hero-row > .demo-panel > .studio-momentum-heading { grid-column: 1; grid-row: 2; align-self: start; flex-wrap: wrap; margin-top: 0; }
+  .demo-app .studio-hero-row > .demo-panel > .studio-momentum-chart { grid-column: 2; grid-row: 1 / span 2; width: 100%; align-self: center; }
+  .demo-app .studio-hero-row > .demo-panel > .studio-momentum-detail { grid-column: 1 / -1; grid-row: 3; }
+}
+@media (max-width: 900px) {
+  .demo-app .demo-sidebar { overflow: visible; }
+  .demo-app .demo-sidebar nav button { min-height: 48px; }
+  .demo-app .studio-welcome-stamp { display: none; }
+}
+@media (max-width: 700px) {
+  .demo-app .studio-hero-copy { max-width: 88%; }
+  .demo-app .studio-hero-art { opacity: .15; right: -8%; width: 48%; }
+  .demo-app .studio-hero-row > .demo-panel { display: block; }
+  .demo-app .studio-momentum-chart svg { max-height: none; }
+  .demo-app .studio-paths { grid-template-columns: minmax(0, 1fr); }
+  .demo-app .studio-path-card { display: grid; grid-template-columns: 104px minmax(0, 1fr); }
+  .demo-app .studio-path-body { padding: 22px 18px; }
+  .demo-app .studio-path-body h3 { font-size: 1.25rem; }
+  .demo-app .studio-path-body p { font-size: var(--type-label); line-height: 1.75; }
+  .demo-app .studio-path-footer > span { max-width: none; }
+  .demo-app .demo-section-title { flex-wrap: wrap; align-items: flex-start; gap: 12px; }
+  .demo-app .demo-metrics article > span { max-width: 100%; }
+  .demo-app .studio-speakers { gap: 6px; margin-inline: -4px; flex-wrap: wrap; }
+  .demo-app .studio-speakers > div { gap: 7px; }
+  .demo-app .studio-audio-controls { flex-wrap: wrap; }
+  .demo-app .studio-audio-controls > div { flex-basis: calc(100% - 65px); }
+  .demo-app .studio-audio-bottom { flex-wrap: wrap; gap: 12px 20px; }
+  .demo-app .demo-language > select { font-size: 1rem; max-width: 190px; }
+  .demo-app .demo-toolbar { row-gap: 12px; }
+  .demo-app .studio-note-card > p { max-width: none; }
+}
+@media (max-width: 400px) {
+  .demo-app .studio-path-card { display: flex; }
+  .demo-app .studio-path-card > .studio-section-art { height: 150px; }
+  .demo-app .studio-hero-copy { max-width: 100%; }
+  .demo-app .demo-sidebar nav[data-open="true"] { grid-template-columns: minmax(0, 1fr); }
+  .demo-app .studio-speakers { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .demo-app .studio-speaker-link { display: none; }
+}

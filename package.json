@@ -8,7 +8,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:smoke": "node scripts/smoke.mjs",
-    "test": "node --conditions=react-server --import=tsx --test --test-concurrency=1 tests/*.test.ts",
+    "test:demo": "node scripts/test-demo.mjs",
+    "test": "node scripts/run-unit-tests.mjs",
     "admin:grant": "node --conditions=react-server --import=tsx scripts/grant-role.mjs"
   },
   "engines": {

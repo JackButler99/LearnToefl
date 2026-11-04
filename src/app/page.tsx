@@ -2,10 +2,13 @@ import Link from "next/link";
 import { getUser } from "@/lib/auth";
 import { recentAttempts } from "@/lib/attempts";
 import { DashboardActions } from "@/components/dashboard-actions";
+import { DemoApp } from "@/components/demo/demo-app";
+import { isPortfolioDemo } from "@/lib/demo-mode";
 
 export const dynamic = "force-dynamic";
 const labels = { listening: "Listening", structure: "Structure", reading: "Reading" };
 export default async function Home() {
+  if(isPortfolioDemo())return <DemoApp/>;
   const user = await getUser();
   const recent = user ? recentAttempts(user.id) : [];
   return <main className="shell">
@@ -16,7 +19,7 @@ export default async function Home() {
       <h1>Lebih siap menghadapi<br /><em>tes bahasa Inggris.</em></h1>
       <p>Latihan terarah dan simulasi berdurasi penuh mengikuti susunan TOEFL ITP Level 1. Kerjakan, simpan progres, dan pelajari alasan di balik tiap jawaban.</p>
       <div className="hero-actions">{user ? <a className="button primary" href="#mulai">Mulai belajar <span>↗</span></a> : <Link className="button primary" href="/login">Mulai gratis <span>↗</span></Link>}
-      <a className="button ghost" href="#format">Lihat format tes</a></div>
+      <Link className="button ghost" href="/demo">Coba demo tanpa login <span aria-hidden="true">↗</span></Link></div>
     </div><div className="hero-visual" aria-hidden="true"><div className="visual-ring ring-one"/><div className="visual-ring ring-two"/><div className="visual-center"><span>140</span><small>SOAL LATIHAN</small></div><div className="visual-note note-top">LISTENING · STRUCTURE · READING</div><div className="visual-note note-bottom">35 + 25 + 55 MENIT</div></div></section>
     <section id="format" className="overview"><div className="section-heading"><span className="eyebrow">FORMAT LEVEL 1</span><h2>Tiga bagian. Satu tujuan.</h2><p>Latihan singkat untuk fokus, simulasi penuh untuk membangun ritme.</p></div>
       <div className="format-grid"><article><span className="section-number">01 / AUDIO</span><h3>Listening<br />Comprehension</h3><p>Dialog dan paparan singkat dengan pertanyaan pemahaman.</p><strong>50 soal <i/> 35 menit</strong></article>

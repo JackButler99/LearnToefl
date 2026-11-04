@@ -3,9 +3,11 @@ import { mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { migratePlatform } from "./schema";
+import { isPortfolioDemo } from "./demo-mode";
 
 let singleton: DatabaseSync | undefined;
 export function db(): DatabaseSync {
+  if(isPortfolioDemo())throw Error("Database access is disabled in portfolio demo mode.");
   if (singleton) return singleton;
   const directory = process.env.DATA_DIR || join(process.cwd(), "data");
   mkdirSync(directory, { recursive: true });
